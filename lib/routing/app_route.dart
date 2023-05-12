@@ -27,13 +27,13 @@ final routerProvider = Provider<GoRouter>(
     return GoRouter(
       refreshListenable: router,
       initialLocation: '/',
-      // redirect: (BuildContext bc, GoRouterState state) {
-      // final isLoginRoute = state.subloc == '/';
-      //if (isLoginRoute && ref.watch(loginPageController).userLogged) {
-      //return '/home';
-      //}
-      //return null;
-      //},
+      redirect: (BuildContext bc, GoRouterState state) {
+        final isLoginRoute = state.subloc == '/';
+        if (isLoginRoute && ref.watch(loginPageController).userLogged) {
+          return '/home';
+        }
+        return null;
+      },
       routes: [
         GoRoute(
           path: '/',

@@ -1,17 +1,21 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:projsabado/controller/login_controller.dart';
-import 'package:projsabado/repository/login_repository.dart';
 
 class LoginPage extends ConsumerWidget {
-  LoginPage({super.key});
-  final loginRep = LoginRepository(dio: Dio());
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = ref.watch(loginPageController);
+    final nameController = TextEditingController(text: pageController.userName);
+    final passController = TextEditingController(text: pageController.password);
+    login() {
+      // if (pageController.formKey.currentState!.validate()) {
+      ref.read(loginPageController.notifier).changeUserLogged();
+      // }
+    }
+
     return Consumer(builder: (context, watch, _) {
       return Scaffold(
         appBar: AppBar(
@@ -27,9 +31,10 @@ class LoginPage extends ConsumerWidget {
                   const Text('Login'),
                   const SizedBox(height: 10),
                   TextFormField(
-                    onSaved: (value) => ref
+                    controller: nameController,
+                    onChanged: (value) => ref
                         .read(loginPageController.notifier)
-                        .changeName(value!),
+                        .changeName(value),
                     decoration: const InputDecoration(
                       prefixIcon: Icon(
                         Icons.abc,
@@ -46,6 +51,7 @@ class LoginPage extends ConsumerWidget {
                   const Text('Password'),
                   const SizedBox(height: 10),
                   TextFormField(
+                    controller: passController,
                     onChanged: (value) => ref
                         .read(loginPageController.notifier)
                         .changePassword(value),
@@ -74,18 +80,7 @@ class LoginPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                      onPressed: () async => {
-                            ref
-                                .read(loginPageController.notifier)
-                                .changeUserLogged(),
-                            print('Nome: ${pageController.userName}'),
-                            print(pageController.password),
-                            print('show pass: ${pageController.showPassword}'),
-                            print(
-                                'User esta logado: ${pageController.userLogged}'),
-                            context.push('/home'),
-                          },
-                      child: Text('Logar')),
+                      onPressed: () => login(), child: const Text('Logar')),
                 ],
               ),
             ),

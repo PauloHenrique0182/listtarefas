@@ -1,29 +1,35 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:projsabado/repository/login_repository.dart';
+import 'package:projsabado/service/login_service.dart';
 
 class LoginPageState {
+  final GlobalKey<FormState> formKey;
   String userName;
   String password;
   bool showPassword;
   bool userLogged;
 
   LoginPageState({
+    GlobalKey<FormState>? formKey,
     String? userName,
     String? password,
     bool? showPassword,
     bool? userLogged,
-  })  : userName = userName ?? '',
+  })  : formKey = formKey ?? GlobalKey<FormState>(),
+        userName = userName ?? '',
         password = password ?? '',
         showPassword = showPassword ?? false,
         userLogged = userLogged ?? false;
 
   LoginPageState copyWith({
+    GlobalKey<FormState>? formKey,
     String? userName,
     String? password,
     bool? showPassword,
     bool? userLogged,
   }) {
     return LoginPageState(
+        formKey: formKey ?? this.formKey,
         userName: userName ?? this.userName,
         password: password ?? this.password,
         showPassword: showPassword ?? this.showPassword,
@@ -49,9 +55,8 @@ class LoginController extends StateNotifier<LoginPageState> {
 
   Future<void> changeUserLogged() async {
     bool log = await ref
-        .watch(LoginRepositoryProvider)
-        .getAuth(state.userName, state.password)
-        .then((value) => value);
+        .watch(loginServiceProvider.notifier)
+        .login(state.userName, state.password);
     state = state.copyWith(userLogged: log);
   }
 }

@@ -11,7 +11,7 @@ class TarefaPageState {
     Tarefa? tarefaToEdit,
   })  : tarefaList = tarefaList ?? [],
         tarefaToEdit = tarefaToEdit ??
-            Tarefa(id: 0, titulo: '', descricao: '', prioridade: '');
+            Tarefa(id: 0, titulo: '', descricao: '', prioridade: 'alta');
 
   TarefaPageState copyWith({
     List<Tarefa>? tarefaList,
@@ -37,8 +37,8 @@ class TarefaPageController extends StateNotifier<TarefaPageState> {
   }
 
   Tarefa getTarefaById(int id) {
-    Tarefa tarefa =
-        Tarefa(descricao: '', id: getSequence(), prioridade: '', titulo: '');
+    Tarefa tarefa = Tarefa(
+        descricao: '', id: getSequence(), prioridade: 'alta', titulo: '');
     if (id != 0) {
       for (var element in state.tarefaList) {
         if (element.id == id) {
@@ -63,12 +63,6 @@ class TarefaPageController extends StateNotifier<TarefaPageState> {
     );
   }
 
-  void addTarefa(Tarefa novaTarefa) {
-    state = state.copyWith(
-      tarefaList: [...state.tarefaList, novaTarefa],
-    );
-  }
-
   int getSequence() {
     int maiorId = 0;
     for (Tarefa tarefa in state.tarefaList) {
@@ -81,6 +75,14 @@ class TarefaPageController extends StateNotifier<TarefaPageState> {
 
   void updateTarefaDescription(String desc) {
     state.tarefaToEdit = state.tarefaToEdit.copyWith(descricao: desc);
+  }
+
+  void updateTarefaTitulo(String desc) {
+    state.tarefaToEdit = state.tarefaToEdit.copyWith(titulo: desc);
+  }
+
+  void updateTarefaPriority(String desc) {
+    state.tarefaToEdit = state.tarefaToEdit.copyWith(prioridade: desc);
   }
 
   void updateTarefa(Tarefa tarefa) {

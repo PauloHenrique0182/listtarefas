@@ -11,6 +11,7 @@ class TarefaRepository {
 
   Future<List<Tarefa>> getTarefaList() async {
     try {
+      dio.options.validateStatus = (status) => true;
       final response = await dio.get(
           'https://b2425c80-36d7-4c43-a19f-1408fba865ae.mock.pstmn.io/tarefa');
       print(response.data);

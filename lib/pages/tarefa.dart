@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:projsabado/controller/tarefas_controller.dart';
+import 'package:projsabado/enums/prioridade_enum.dart';
 import 'package:projsabado/model/tarefa_model.dart';
 
 class TarefaPage extends ConsumerWidget {
@@ -10,9 +11,10 @@ class TarefaPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tarefa = ref.read(tarefaPageControllerProvider).tarefaToEdit;
+    final tarefa = ref.watch(tarefaPageControllerProvider).tarefaToEdit;
     final tituloController = TextEditingController(text: tarefa.titulo);
     final descricaoController = TextEditingController(text: tarefa.descricao);
+
     return Consumer(builder: (context, watch, _) {
       return Scaffold(
         appBar: AppBar(title: const Text('Tarefa')),
@@ -30,6 +32,11 @@ class TarefaPage extends ConsumerWidget {
                         labelStyle: TextStyle(fontSize: 30),
                       ),
                       controller: tituloController,
+                      onChanged: (value) => {
+                        ref
+                            .read(tarefaPageControllerProvider.notifier)
+                            .updateTarefaTitulo(value)
+                      },
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
@@ -46,16 +53,15 @@ class TarefaPage extends ConsumerWidget {
                       controller: descricaoController,
                     ),
                     const SizedBox(height: 30),
-                    Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          const Text('Prioridade: '),
-                          Text(
-                            tarefa.prioridade,
-                          ),
-                        ],
-                      ),
+                    DropdownButtonFormField(
+                      decoration:
+                          const InputDecoration(labelText: 'Prioridade'),
+                      items: listDrop(),
+                      onChanged: (value) => {
+                        ref
+                            .read(tarefaPageControllerProvider.notifier)
+                            .updateTarefaPriority(value!),
+                      },
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -91,5 +97,17 @@ class TarefaPage extends ConsumerWidget {
       behavior: SnackBarBehavior.floating,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  List<DropdownMenuItem<String>> listDrop() {
+    List<DropdownMenuItem<String>> list = [];
+    for (var element in PrioridadeEnum.values) {
+      DropdownMenuItem<String> drop = DropdownMenuItem(
+        value: element.value,
+        child: Text(element.value),
+      );
+      list.add(drop);
+    }
+    return list;
   }
 }
