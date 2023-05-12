@@ -17,6 +17,24 @@ class HomePage extends ConsumerWidget {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Lista de Tarefas'),
+          actions: [
+            Row(
+              children: [
+                const Text('Adicionar Tarefa'),
+                IconButton(
+                  onPressed: () {
+                    ref
+                        .watch(tarefaPageControllerProvider.notifier)
+                        .getTarefaById(0);
+                    context.push('/tarefa/0');
+                  },
+                  icon: const Icon(Icons.add),
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            const SizedBox(width: 20),
+          ],
         ),
         body: SingleChildScrollView(
             child: ListView.builder(
@@ -33,6 +51,9 @@ class HomePage extends ConsumerWidget {
                               const Color.fromARGB(255, 142, 21, 158),
                           elevation: 5),
                       onPressed: () {
+                        ref
+                            .watch(tarefaPageControllerProvider.notifier)
+                            .getTarefaById(tarefa.id);
                         context.push('/tarefa/${tarefa.id}');
                       },
                       child: Align(
@@ -59,6 +80,16 @@ class HomePage extends ConsumerWidget {
                                 ],
                               ),
                             ),
+                            IconButton(
+                              onPressed: () {
+                                ref
+                                    .read(tarefaPageControllerProvider.notifier)
+                                    .removerTarefa(tarefa);
+                                _showNotification(context, tarefa);
+                              },
+                              icon: const Icon(Icons.delete),
+                              color: Colors.red,
+                            ),
                           ],
                         ),
                       ),
@@ -67,5 +98,14 @@ class HomePage extends ConsumerWidget {
                 })),
       );
     });
+  }
+
+  void _showNotification(BuildContext context, Tarefa tarefa) {
+    final snackBar = SnackBar(
+      content: Text('Tarefa: ${tarefa.titulo} excluida com sucesso'),
+      duration: const Duration(seconds: 5),
+      behavior: SnackBarBehavior.floating,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
