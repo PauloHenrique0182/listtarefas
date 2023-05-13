@@ -1,20 +1,15 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:projsabado/model/tarefa_model.dart';
+import 'package:projsabado/repository/repository.dart';
 
-class TarefaRepository {
-  final Dio dio;
-
-  TarefaRepository({required this.dio});
+// Extends Repository
+class TarefaRepository extends Repository {
+  TarefaRepository();
 
   Future<List<Tarefa>> getTarefaList() async {
     try {
       dio.options.validateStatus = (status) => true;
-      final response = await dio.get(
-          'https://b2425c80-36d7-4c43-a19f-1408fba865ae.mock.pstmn.io/tarefa');
-      print(response.data);
+      final response = await dio.get('/tarefa');
       return ListTarefaModel.fromJson(response.data).tarefas;
     } catch (e) {
       rethrow;
@@ -22,5 +17,4 @@ class TarefaRepository {
   }
 }
 
-final tarefaRepositoryProvider =
-    Provider((ref) => TarefaRepository(dio: Dio()));
+final tarefaRepositoryProvider = Provider((ref) => TarefaRepository());

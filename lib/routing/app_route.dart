@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:projsabado/pages/home.dart';
-import 'package:projsabado/pages/login_page.dart';
+import 'package:projsabado/controller/login_controller.dart';
+import 'package:projsabado/enums/path_enum.dart';
 import 'package:projsabado/pages/page.dart';
-
-import '../controller/login_controller.dart';
 
 class RouterNotifier extends ChangeNotifier {
   final Ref ref;
@@ -26,31 +23,31 @@ final routerProvider = Provider<GoRouter>(
 
     return GoRouter(
       refreshListenable: router,
-      initialLocation: '/',
+      initialLocation: PathEnum.login.value,
       redirect: (BuildContext bc, GoRouterState state) {
-        final isLoginRoute = state.subloc == '/';
+        final isLoginRoute = state.subloc == PathEnum.login.value;
         if (isLoginRoute && ref.watch(loginPageController).userLogged) {
-          return '/home';
+          return PathEnum.home.value;
         }
         return null;
       },
       routes: [
         GoRoute(
-          path: '/',
-          pageBuilder: (context, state) => MaterialPage(
+          path: PathEnum.login.value,
+          pageBuilder: (context, state) => const MaterialPage(
             child: LoginPage(),
             fullscreenDialog: true,
           ),
         ),
         GoRoute(
-          path: '/home',
+          path: PathEnum.home.value,
           pageBuilder: (context, state) => const MaterialPage(
             child: HomePage(),
             fullscreenDialog: true,
           ),
         ),
         GoRoute(
-          path: '/tarefa/:id',
+          path: PathEnum.tarefa.value,
           pageBuilder: (context, state) => MaterialPage(
             child: TarefaPage(
               id: state.params['id'],

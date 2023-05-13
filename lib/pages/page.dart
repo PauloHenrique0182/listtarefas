@@ -1,4 +1,5 @@
 library page;
 
-export 'home.dart';
-export 'tarefa.dart';
+export 'home_page.dart';
+export 'login_page.dart';
+export 'tarefa_page.dart';
