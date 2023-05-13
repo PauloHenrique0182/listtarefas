@@ -8,10 +8,18 @@ class TarefaPageState {
 
   TarefaPageState({
     List<Tarefa>? tarefaList,
+
+    // Não é uma boa pratica utilizar o mesmo controller para duas telas diferentes
+    // Editar deveria ter um controller diferente
     Tarefa? tarefaToEdit,
   })  : tarefaList = tarefaList ?? [],
         tarefaToEdit = tarefaToEdit ??
-            Tarefa(id: 0, titulo: '', descricao: '', prioridade: 'alta');
+            Tarefa(
+              id: 0,
+              titulo: '',
+              descricao: '',
+              prioridade: 'alta',
+            );
 
   TarefaPageState copyWith({
     List<Tarefa>? tarefaList,
@@ -82,7 +90,9 @@ class TarefaPageController extends StateNotifier<TarefaPageState> {
   }
 
   void updateTarefaPriority(String desc) {
-    state.tarefaToEdit = state.tarefaToEdit.copyWith(prioridade: desc);
+    // Lembra que se o estado for imutavel, temos que criar um novo objeto
+    final tarefaToEdit = state.tarefaToEdit.copyWith(prioridade: desc);
+    state = state.copyWith(tarefaToEdit: tarefaToEdit);
   }
 
   void updateTarefa(Tarefa tarefa) {

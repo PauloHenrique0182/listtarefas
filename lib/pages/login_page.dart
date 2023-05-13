@@ -8,12 +8,15 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pageController = ref.watch(loginPageController);
-    final nameController = TextEditingController(text: pageController.userName);
-    final passController = TextEditingController(text: pageController.password);
+    // Se você trabalha com um controller que tem um estado você não precisa usar o TextEditingController
+    //final nameController = TextEditingController(text: pageController.userName);
+    //final passController = TextEditingController(text: pageController.password);
     login() {
-      // if (pageController.formKey.currentState!.validate()) {
-      ref.read(loginPageController.notifier).changeUserLogged();
-      // }
+      // Se o formulário for válido, salva os dados
+      if (pageController.formKey.currentState!.validate()) {
+        pageController.formKey.currentState!.save();
+        ref.read(loginPageController.notifier).changeUserLogged();
+      }
     }
 
     return Consumer(builder: (context, watch, _) {
@@ -24,6 +27,8 @@ class LoginPage extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.fromLTRB(32, 32, 32, 0),
           child: Form(
+            // adiciona a chave do formulário, para que possamos validar o formulário
+            key: pageController.formKey,
             child: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -31,10 +36,10 @@ class LoginPage extends ConsumerWidget {
                   const Text('Login'),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: nameController,
-                    onChanged: (value) => ref
+                    // Troca o onChanged pelo onSaved
+                    onSaved: (value) => ref
                         .read(loginPageController.notifier)
-                        .changeName(value),
+                        .changeName(value!),
                     decoration: const InputDecoration(
                       prefixIcon: Icon(
                         Icons.abc,
@@ -51,10 +56,10 @@ class LoginPage extends ConsumerWidget {
                   const Text('Password'),
                   const SizedBox(height: 10),
                   TextFormField(
-                    controller: passController,
-                    onChanged: (value) => ref
+                    // Troca o onChanged pelo onSaved
+                    onSaved: (value) => ref
                         .read(loginPageController.notifier)
-                        .changePassword(value),
+                        .changePassword(value!),
                     obscureText: !pageController.showPassword,
                     decoration: const InputDecoration(
                       labelText: 'Senha',
@@ -80,7 +85,9 @@ class LoginPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                      onPressed: () => login(), child: const Text('Logar')),
+                    onPressed: () => login(),
+                    child: const Text('Logar'),
+                  ),
                 ],
               ),
             ),
